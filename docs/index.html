@@ -1,1 +1,85 @@
-Hello World!
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>My Contact Form Demo</title>
+    <meta name="author" content="Hassan Voyeau">
+    <meta name="description" content="My Contact Form Demo">
+    <meta name="keywords" content="">
+
+    <link rel="stylesheet" href="css/siimple.min.css">
+
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <style>
+        #alert {
+            display:none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="siimple-content siimple-content--small siimple-content--fluid">
+        <div id="alert" class="siimple-alert siimple-alert--primary">
+            <div id="alert-close" class="siimple-alert-close"></div>
+            <div id="alert-content">
+            </div>
+        </div>
+        <form id="form" action="" method="post">
+            <div class="siimple-form">
+                <div class="siimple-form-title">My Contact Form Demo</div>
+                <div class="siimple-form-detail">Fill out the form to contact me</div>
+                <div class="siimple-form-field">
+                    <div class="siimple-form-field-label">Email address</div>
+                    <input type="text" class="siimple-input siimple-input--fluid" placeholder="Your email" id="email" name="email">
+                </div>
+                <div class="siimple-form-field">
+                    <div class="siimple-form-field-label">Message</div>
+                    <textarea class="siimple-textarea siimple-textarea--fluid" rows="5" placeholder="Your message" id="message" name="message"></textarea>
+                </div>
+                <div class="siimple-form-field">
+                    <button name="submit" id="btnsubmit" type="submit" class="siimple-btn siimple-btn--blue">
+                        Send Message
+                    </button>
+                </div>
+            </div>
+            <div class="siimple-footer">
+                Source code : <a href="https://github.com/hassan-theitguy/form-to-email-demo" class="siimple-link">Github project page</a><br/>
+                Developed by <a href="https://hassantt.com/" class="siimple-link">Hassan Voyeau</a>
+            </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#alert-close").click(function () {
+                $("#alert").hide();
+            });
+
+            $("#form").submit(function (event) {
+                console.log("Form being submitted ...");
+
+                $("#alert-content").empty().append('Sending data ...');
+                $("#alert").show();
+
+                event.preventDefault();
+
+                var url = 'https://heroku-nodejs-sendgrid-app.herokuapp.com';
+                var email_val = $("#email").val();
+                var message_val = $("#message").val();
+
+                var posting = $.post(url, { email: email_val, message: message_val });
+
+                posting.done(function (data) {
+                    $("#alert-content").empty().append(data);
+                    $("#alert").show();
+                    $("#email").val('');
+                    $('#message').val('');
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
