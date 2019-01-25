@@ -46,7 +46,7 @@
                 </div>
             </div>
             <div class="siimple-footer">
-                Source code : <a href="https://github.com/hassan-theitguy/form-to-email-demo" class="siimple-link">Github project page</a><br/>
+                Source code : <a href="https://github.com/hassan-theitguy/form-to-email-demo" class="siimple-link">Github project page</a><br />
                 Developed by <a href="https://hassantt.com/" class="siimple-link">Hassan Voyeau</a>
             </div>
     </div>
@@ -61,6 +61,7 @@
                 console.log("Form being submitted ...");
 
                 $("#alert-content").empty().append('Sending data ...');
+                $("#alert").attr("class", "siimple-alert siimple-alert--primary");
                 $("#alert").show();
 
                 event.preventDefault();
@@ -73,9 +74,23 @@
 
                 posting.done(function (data) {
                     $("#alert-content").empty().append(data);
+
+                    if (data.toLowerCase().indexOf("error") >= 0) {
+                        $("#alert").attr("class", "siimple-alert siimple-alert--error");
+                    }
+                    else {
+                        $("#alert").attr("class", "siimple-alert siimple-alert--success");
+                    }
+                    
                     $("#alert").show();
                     $("#email").val('');
                     $('#message').val('');
+                });
+
+                posting.fail(function () {
+                    $("#alert-content").empty().append("Error Occured! Contact Support.");
+                    $("#alert").attr("class", "siimple-alert siimple-alert--error");
+                    $("#alert").show();
                 });
             });
         });
