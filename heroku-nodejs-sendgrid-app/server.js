@@ -22,11 +22,11 @@ var app = http.createServer(function (req, res) {
             req.on('data', function (data) {
                 POST += data;
             })
-            
+
             req.on('end', function () {
                 const sgMail = require('@sendgrid/mail');
                 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-            
+
                 POST = parse(POST.toString());
 
                 const msg = {
@@ -39,19 +39,35 @@ var app = http.createServer(function (req, res) {
 
                 console.log(msg);
 
-                sgMail.send(msg, function (err, response) {
-                    if (err) {
-                        return console.error(err);
-                    }
-                    console.log('Email Sent!');
-                });
+                var validator = require("email-validator");
 
-                res.end('Form data has been processed and emailed! Check your email for a copy of email sent. If you have not received this then let me know via another contact option.');
+                if (validator.validate(msg.cc)) {
+
+                    if (msg.text.trim() == '') {
+                        console.log('Empty message field.');
+                        res.end('Error Occured! Empty Message Field.');
+                    }
+                    else {
+                        sgMail.send(msg, function (err, response) {
+                            if (err) {
+                                console.log('Error: ' + err);
+                                res.end('Error Occured! Contact Support.');
+                            }
+                            else {
+                                console.log('Email Sent!');
+                                res.end('Form data has been processed and emailed! Check your email for a copy of email sent. If you have not received this then let me know via another contact option.');
+                            }
+                        });
+                    }
+                } else {
+                    console.log('Email address failed validation test.');
+                    res.end('Error Occured! Invalid Email Address.');
+                }
             });
 
             req.on('error', function (err) {
                 console.log('Error: ' + err);
-                res.end('Error Occured!');
+                res.end('Error Occured! Contact Support.');
             });
         }
     }
